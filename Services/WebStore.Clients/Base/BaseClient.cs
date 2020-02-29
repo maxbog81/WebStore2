@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using WebStore.Domain;
 
 namespace WebStore.Clients.Base
 {
@@ -24,7 +25,7 @@ namespace WebStore.Clients.Base
 
             var headers = _Client.DefaultRequestHeaders.Accept;
             headers.Clear();
-            headers.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            headers.Add(new MediaTypeWithQualityHeaderValue(MimeType.Json));
         }
 
         protected T Get<T>(string url) where T : new() => GetAsync<T>(url).Result;
