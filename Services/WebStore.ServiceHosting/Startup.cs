@@ -65,7 +65,7 @@ namespace WebStore.ServiceHosting
             services.AddScoped<IOrderService, SqlOrderService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<ICartService, CookieCartService>();
+            services.AddScoped<ICartService, CartService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
