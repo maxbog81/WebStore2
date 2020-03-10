@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using WebStore.Domain.Entities;
 using WebStore.Domain.ViewModels;
 using WebStore.Interfaces.Services;
@@ -13,29 +11,37 @@ namespace WebStore.Controllers
     public class CatalogController : Controller
     {
         private readonly IProductData _ProductData;
-        public CatalogController(IProductData ProductData) => _ProductData = ProductData;
+        private readonly IConfiguration _Configuration;
 
-        public IActionResult Shop(int? SectionId, int? BrandId, [FromServices] IMapper Mapper)
+        public CatalogController(IProductData ProductData, IConfiguration Configuration)
         {
+            _ProductData = ProductData;
+            _Configuration = Configuration;
+        }
+
+        public IActionResult Shop(int? SectionId, int? BrandId, [FromServices] IMapper Mapper, int Page = 1)
+        {
+            var page_size = int.TryParse(_Configuration["PageSize"], out var size) ? size : (int?)null;
+
             var products = _ProductData.GetProducts(new ProductFilter
             {
                 SectionId = SectionId,
-                BrandId = BrandId
+                BrandId = BrandId,
+                Page = Page,
+                PageSize = page_size
             });
 
             return View(new CatalogViewModel
             {
                 SectionId = SectionId,
                 BrandId = BrandId,
-                Products = products.Select(Mapper.Map<ProductViewModel>).OrderBy(p => p.Order)
-                //Products = products.Select(p => new ProductViewModel
-                //{
-                //    Id = p.Id,
-                //    Name = p.Name,
-                //    Order = p.Order,
-                //    Price = p.Price,
-                //    ImageUrl = p.ImageUrl
-                //}).OrderBy(p => p.Order)
+                Products = products.Products.Select(Mapper.Map<ProductViewModel>).OrderBy(p => p.Order),
+                PageViewModel = new PageViewModel
+                {
+                    PageSize = page_size ?? 0,
+                    PageNumber = Page,
+                    TotalItems = products.TotalCount
+                }
             });
         }
 
@@ -44,7 +50,7 @@ namespace WebStore.Controllers
             var product = _ProductData.GetProductById(id);
 
             if (product is null)
-                return NotFound();  
+                return NotFound();
 
             return View(new ProductViewModel
             {
