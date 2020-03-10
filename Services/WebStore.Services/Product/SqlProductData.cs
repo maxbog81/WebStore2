@@ -5,6 +5,7 @@ using WebStore.DAL.Context;
 using WebStore.Domain.DTO.Products;
 using WebStore.Domain.Entities;
 using WebStore.Interfaces.Services;
+using WebStore.Services.Mapping;
 
 namespace WebStore.Services.Product
 {
@@ -18,9 +19,15 @@ namespace WebStore.Services.Product
            //.Include(section => section.Products)
            .AsEnumerable();
 
+        public SectionDTO GetSectionById(int id) => _db.Sections.Find(id).ToDTO();
+
+
         public IEnumerable<Brand> GetBrands() => _db.Brands
            //.Include(brand => brand.Products)
            .AsEnumerable();
+
+        public BrandDTO GetBrandById(int id) => _db.Brands.Find(id).ToDTO();
+
 
         public IEnumerable<ProductDTO> GetProducts(ProductFilter Filter = null)
         {
@@ -35,22 +42,22 @@ namespace WebStore.Services.Product
             return query
                 .AsEnumerable()
                 .Select(p => new ProductDTO
-                 {
-                     Id = p.Id,
-                     Name = p.Name,
-                     Order = p.Order,
-                     Price = p.Price,
-                     ImageUrl = p.ImageUrl,
-                     Brand = p.Brand is null ? null : new BrandDTO
-                     {
-                         Id = p.Brand.Id,
-                         Name = p.Brand.Name
-                     },
-                     Section = p.Section is null ? null : new SectionDTO
-                     {
-                         Id = p.Section.Id,
-                         Name = p.Section.Name
-                     }
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Order = p.Order,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Brand = p.Brand is null ? null : new BrandDTO
+                    {
+                        Id = p.Brand.Id,
+                        Name = p.Brand.Name
+                    },
+                    Section = p.Section is null ? null : new SectionDTO
+                    {
+                        Id = p.Section.Id,
+                        Name = p.Section.Name
+                    }
                 });
         }
 
