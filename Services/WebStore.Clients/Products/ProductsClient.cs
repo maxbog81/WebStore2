@@ -13,18 +13,18 @@ namespace WebStore.Clients.Products
     {
         public ProductsClient(IConfiguration config) : base(config, WebAPI.Products) { }
 
-        public IEnumerable<Section> GetSections() => Get<List<Section>>($"{_ServiceAddress}/sections");
+        public IEnumerable<SectionDTO> GetSections() => Get<List<SectionDTO>>($"{_ServiceAddress}/sections");
 
         public SectionDTO GetSectionById(int id) => Get<SectionDTO>($"{_ServiceAddress}/sections/{id}");
 
-        public IEnumerable<Brand> GetBrands() => Get<List<Brand>>($"{_ServiceAddress}/brands");
+        public IEnumerable<BrandDTO> GetBrands() => Get<List<BrandDTO>>($"{_ServiceAddress}/brands");
 
         public BrandDTO GetBrandById(int id) => Get<BrandDTO>($"{_ServiceAddress}/brands/{id}");
 
-        public IEnumerable<ProductDTO> GetProducts(ProductFilter Filter = null) => 
+        public PagedProductsDTO GetProducts(ProductFilter Filter = null) => 
             Post(_ServiceAddress, Filter)
                .Content
-               .ReadAsAsync<List<ProductDTO>>()
+               .ReadAsAsync<PagedProductsDTO>()
                .Result;
 
         public ProductDTO GetProductById(int id) => Get<ProductDTO>($"{_ServiceAddress}/{id}");

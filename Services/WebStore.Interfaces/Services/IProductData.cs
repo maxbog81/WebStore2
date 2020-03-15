@@ -6,15 +6,15 @@ namespace WebStore.Interfaces.Services
 {
     public interface IProductData
     {
-        IEnumerable<Section> GetSections();
+        IEnumerable<SectionDTO> GetSections();
 
         SectionDTO GetSectionById(int id);
 
-        IEnumerable<Brand> GetBrands();
+        IEnumerable<BrandDTO> GetBrands();
 
         BrandDTO GetBrandById(int id);
 
-        IEnumerable<ProductDTO> GetProducts(ProductFilter Filter = null);
+        PagedProductsDTO GetProducts(ProductFilter Filter = null);
 
         ProductDTO GetProductById(int id);
     }
