@@ -10,9 +10,13 @@
 
   <ItemGroup>
     <Compile Remove="Logs\**" />
+    <Compile Remove="wwwroot\imgs\**" />
     <Content Remove="Logs\**" />
+    <Content Remove="wwwroot\imgs\**" />
     <EmbeddedResource Remove="Logs\**" />
+    <EmbeddedResource Remove="wwwroot\imgs\**" />
     <None Remove="Logs\**" />
+    <None Remove="wwwroot\imgs\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +42,6 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="wwwroot\imgs\" />
   </ItemGroup>
 
   <ItemGroup>
