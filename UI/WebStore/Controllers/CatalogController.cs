@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using WebStore.Domain.DTO.Products;
 using WebStore.Domain.Entities;
 using WebStore.Domain.ViewModels;
 using WebStore.Interfaces.Services;
@@ -10,6 +13,8 @@ namespace WebStore.Controllers
 {
     public class CatalogController : Controller
     {
+        private const string __PageSize = "PageSize";
+
         private readonly IProductData _ProductData;
         private readonly IConfiguration _Configuration;
 
@@ -21,7 +26,7 @@ namespace WebStore.Controllers
 
         public IActionResult Shop(int? SectionId, int? BrandId, [FromServices] IMapper Mapper, int Page = 1)
         {
-            var page_size = int.TryParse(_Configuration["PageSize"], out var size) ? size : (int?)null;
+            var page_size = int.TryParse(_Configuration[__PageSize], out var size) ? size : (int?)null;
 
             var products = _ProductData.GetProducts(new ProductFilter
             {
@@ -62,5 +67,24 @@ namespace WebStore.Controllers
                  Brand = product.Brand?.Name
             });
         }
+
+        #region API
+
+        public IActionResult GetFiltratedItems(int? SectionId, int? BrandId, [FromServices] IMapper Mapper, int Page)
+        {
+            var products = GetProducts(SectionId, BrandId, Page);
+            return PartialView("Partial/_FeaturesItem", products.Select(Mapper.Map<ProductViewModel>));
+        }
+
+        private IEnumerable<ProductDTO> GetProducts(int? SectionId, int? BrandId, int Page) =>
+            _ProductData.GetProducts(new ProductFilter
+            {
+                SectionId = SectionId,
+                BrandId = BrandId,
+                Page = Page,
+                PageSize = int.Parse(_Configuration[__PageSize])
+            }).Products;
+
+        #endregion
     }
 }

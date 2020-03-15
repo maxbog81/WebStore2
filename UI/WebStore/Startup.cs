@@ -12,6 +12,7 @@ using WebStore.Clients.Orders;
 using WebStore.Clients.Products;
 using WebStore.Clients.Values;
 using WebStore.Domain.Entities.Identity;
+using WebStore.Hubs;
 using WebStore.Infrastructure.AutoMapper;
 using WebStore.Infrastructure.Middleware;
 using WebStore.Interfaces.Api;
@@ -29,6 +30,8 @@ namespace WebStore
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+
             services.AddAutoMapper(opt =>
             {
                 opt.AddProfile<ViewModelMapping>();
@@ -116,6 +119,11 @@ namespace WebStore
 
             //app.UseSession();
             app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseSignalR(route =>
+            {
+                route.MapHub<InformationHub>("/info");
+            });
 
             app.UseMvc(routes =>
             {
